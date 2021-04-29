@@ -1,13 +1,14 @@
 from django.conf.urls import url
-from django.conf import settings
 from . import views
-import os
+from django.conf import settings
+from django.conf.urls.static import static
 
-urlpatterns=[
-    url('^$',views.photos,name='photos'),
-    url('^location/(?P<location>\w+)/', views.image_location, name='location'),
-    url('^search/', views.search_results, name='search'),
+urlpatterns = [
+    url(r"^$", views.index, name="index"),
+    url(r"^search/", views.search, name="search_results"),
+    url(r"^browse/$", views.browse, name="browse"),
+    url(r"^location/(\d+)", views.location_filter, name="location"),
 ]
 
 if settings.DEBUG:
-    urlpatterns+= static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
+    urlpatterns+=static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
