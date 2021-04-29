@@ -1,13 +1,11 @@
 from django.db import models
-import cloudinary
-from cloudinary.models import cloudinaryField
 import os
 
 # Create your models here.
 class Category(models.Model):
     name = models.CharField(max_length=30)
 
-    def__str__(self):
+    def __str__(self):
         return self.name
 
     def save_cateory(self):
@@ -34,13 +32,13 @@ class Location(models.Model):
         return locations
 
 class Image(models.Model):
-    image = CloudinaryField('image')
+    #image = CloudinaryField('image')
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=100)
     category = models.ForeignKey(Category,on_delete=models.CASCADE)
     location = models.ForeignKey(Location,on_delete=models.CASCADE)
 
-     def __str__(self):
+    def __str__(self):
         return self.name
 
     def save_image(self):
