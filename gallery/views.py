@@ -1,12 +1,12 @@
 from django.shortcuts import render, redirect
 from gallery.models import Photo, Location
+from django.http  import HttpResponse
 
 # Create your views here.
 def index(request):
-    photos = Photo.show_all_photos()
-    return render(request, "gallery/index.html", context={"photos":photos})
-
-def search(request):
+    #photos = Photo.show_all_photos()
+    #return render(request, "gallery/index.html", context_instance=RequestContext(request))
+ def search(request):
     
     if request.method == "GET":
         search_term = request.GET.get("search")
