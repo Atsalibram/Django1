@@ -1,125 +1,72 @@
-# from django.db import models
-
-# # Create your models here.
 from django.db import models
-import paperclip
-import random
+import cloudinary
 from cloudinary.models import CloudinaryField
+import os
 
 # Create your models here.
-
-class Location(models.Model):
-    """
-    A class for geographic loactions where a Photo could be taken
-    """
-    city = models.CharField(max_length=244)
-    country = models.CharField(max_length=244)
-
-    def __str__(self):
-        """
-        String representation
-        """
-        return f"{self.city}, {self.country}"
-
-    def save_location(self):
-        """
-        A method to save the location name
-        """
-        return self.save()
-
-    @classmethod
-    def find_photos_by_location(cls, id):
-        return cls.objects.filter(photo__location__id = id)
-
 class Category(models.Model):
-    """
-    A class for the category the Photo falls under
-    """
-    name = models.CharField(max_length=144)
+    name = models.CharField(max_length=30)
 
     def __str__(self):
-        """
-        String representation
-        """
         return self.name
 
     def save_category(self):
-        """
-        A method to save the category name
-        """
-        return self.save()
+        self.save()  
 
+    def delete_category(self):
+        self.delete()      
 
-class Photo(models.Model):
-    """
-    A class thaat determines how photos will be saved into the database
-    """
-    name = models.CharField(max_length=244)
-    description = models.TextField()
-    #location = models.ForeignKey(Location)
-    categories = models.ManyToManyField(Category)
-    post_date = models.DateTimeField(auto_now_add=True)
-    image = CloudinaryField('image')
+class Location(models.Model):
+    name = models.CharField(max_length=30)
 
     def __str__(self):
-        """
-        String representation
-        """
         return self.name
 
-    def save_photo(self):
-        """
-        A method to save the photo
-        """
-        return self.save()
+    def save_location(self):
+        self.save()    
+
+    def delete_location(self):
+        self.delete()
+        
+    @classmethod
+    def get_location(cls):
+        locations = Location.objects.all()
+        return locations
+
+
+class Image(models.Model):
+    image = CloudinaryField('image')
+    name = models.CharField(max_length=30)
+    description = models.CharField(max_length=100)
+    category = models.ForeignKey(Category,on_delete=models.CASCADE)
+    location = models.ForeignKey(Location,on_delete=models.CASCADE)
+
+    def __str__(self):
+        return self.name
+
+    def save_image(self):
+        self.save()
+
+    def delete_image(self):
+        self.delete()
 
     @classmethod
-    def copy_url(cls, id):
-        photo = cls.objects.get(id = id)
-        pyperclip.copy(photo.image.url)
-  
-    @classmethod
-    def show_all_photos(cls):
-        """
-        A method to return all photos posted in order of the most recent to oldest
-        """
-        return cls.objects.order_by("post_date")[::-1]
+    def update_image(cls,id):
+       cls.objects.filter(id=id).update(image)
 
     @classmethod
-    def show_random_photo(cls):
-        """
-        A method which returns a random photo
-        """
-        all_photos = cls.show_all_photos()
-        random_id = random.randint(1, len(all_photos))
-
-        return cls.objects.get(id = random_id)
+    def get_image_by_id(cls,id):
+        image = cls.objects.filter(id=id).all()
+        return image
 
     @classmethod
-    def delete_photo(cls, id):
-        """
-        A method to delete an object
-        """
-
-        return cls.objects.filter(id = id).delete()
+    def search_image(cls,category):
+        images = cls.objects.filter(category__name__icontains=category)
+        return images
 
     @classmethod
-    def get_photo_by_id(cls, id):
-        """
-        A method to get a photo based on its id
-        """
-        return cls.objects.filter(id = id)[0]
-
-    @classmethod
-    def search_photo_by_category(cls, search):
-        """
-        A method to return all photos that fall under a certain catergory
-        """
-        return cls.objects.filter(categories__name__icontains = search)
-
-    @classmethod
-    def filter_by_location(cls, id):
-        """
-        A method to filter all photos based on the location in which they were taken
-        """
-        return cls.objects.filter(location__id = id)
+    def filter_by_location(cls, location):
+        image_location = Image.objects.filter(location__name=location).all()
+        return image_location 
+        
+           
