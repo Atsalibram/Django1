@@ -42,8 +42,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'bootstrap3',
     'cloudinary',
-    'photos',
+    'gallery'
 ]
+
+cloudinary.config( 
+  cloud_name='dtum3zcmh', 
+  api_key='168271512291369', 
+  api_secret='Gf3Wv0IJmVQqjcY-Je-6sLx5J4I', 
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
